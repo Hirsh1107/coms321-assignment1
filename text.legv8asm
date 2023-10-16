@@ -1,0 +1,21 @@
+
+ADDI X0, XZR, #5 //swap param i
+ADDI X1, XZR, #12 //swap param j
+
+BL print
+BL swap
+BL print
+
+swap:
+SUBI SP, SP, #16
+STUR X0, [SP, #0]
+STUR X1, [SP, #8]
+
+LDUR X0, [SP, #8]
+LDUR X1, [SP, #0]
+BL LR
+
+print:
+PRNT X0
+PRNT X1
+BL LR
