@@ -1,0 +1,17 @@
+top_of_print_loop:
+SUBS XZR, X9, X1
+B.GE end_of_print_loop
+ 
+LSL X10, X9, #3 //X10 = 8i
+ADD X10, X10, X0 //X10 = &a[i]
+LDUR X10, [X10, #0] //X10 = a[i]
+
+PRNT X10
+
+ADDI X9, X9, #1 //i++
+
+B top_of_print_loop
+
+end_of_print_loop:
+PRNL 
+BR LR
