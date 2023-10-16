@@ -6,13 +6,17 @@ BL print
 BL swap
 BL print
 
-swap: //WORKING
-SUBI SP, SP, #16
+swap:
+
+SUBI SP, SP, #16 //ALLOCATE MEMORY TO SP
+
 STUR X0, [SP, #0]
 STUR X1, [SP, #8]
 
 LDUR X0, [SP, #8]
 LDUR X1, [SP, #0]
+
+ADDI SP, SP, #16 //RESTORE SP
 
 BL LR
 
