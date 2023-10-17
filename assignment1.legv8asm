@@ -1,11 +1,14 @@
 
 ADDI X0, XZR, #5 //swap param i
 ADDI X1, XZR, #12 //swap param j
+ADDI X2, XZR, #0 //array A
+ADDI X3, XZR, #5 //length of array n
+ADDI X4, XZR, #0 //increment i
+ADDI X5, XZR, #0 //compare two values
 
-BL swap
+BL fill
 
 swap:
-
 SUBI SP, SP, #16 //ALLOCATE MEMORY TO SP
 
 STUR X0, [SP, #0]
@@ -15,8 +18,25 @@ LDUR X0, [SP, #8]
 LDUR X1, [SP, #0]
 
 ADDI SP, SP, #16 //RESTORE SP
-
 BR LR
+
+
+fill:
+SUBS X5, X4, X3 //X5 = i - n
+B.GE exit_fill
+
+//fill array a of n elements with decreasing values from n-1 to 0
+PRNT X4
+
+
+
+ADDI X4, X4, #1
+
+B fill
+exit_fill:
+BR LR
+
+
 
 
 
