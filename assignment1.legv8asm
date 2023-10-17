@@ -24,6 +24,26 @@ BL find_index
 B end
 
 
+complete_cycle:
+
+//TODO implement complete_cycle
+
+BR LR
+
+
+cycle_sort:
+
+//TODO implement cycle_sort
+
+BR LR
+
+
+binary_search:
+
+//TODO implement binary_search
+
+BR LR
+
 swap:
 SUBI SP, SP, #16 //ALLOCATE MEMORY TO SP
 
