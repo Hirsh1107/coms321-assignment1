@@ -2,9 +2,7 @@
 ADDI X0, XZR, #5 //swap param i
 ADDI X1, XZR, #12 //swap param j
 
-BL print
 BL swap
-BL print
 
 swap:
 
@@ -18,9 +16,7 @@ LDUR X1, [SP, #0]
 
 ADDI SP, SP, #16 //RESTORE SP
 
-BL LR
+BR LR
 
-print:
-PRNT X0
-PRNT X1
-BL LR
+
+
