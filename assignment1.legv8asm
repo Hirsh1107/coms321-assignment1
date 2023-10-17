@@ -7,18 +7,18 @@ B main
 main:
 ADDI X0, XZR, #5 //swap param i
 ADDI X1, XZR, #12 //swap param j
-ADDI X2, XZR, #0 //array A
-ADDI X3, XZR, #5 //length of array n
-ADDI X4, XZR, #0 //TEMP i for loops
-ADDI X5, XZR, #0 //TEMP for loops
-ADDI X6, XZR, #0 //TEMP for loops
-ADDI X7, XZR, #0 //TEMP START
-ADDI X8, XZR, #3 //TEMP VALUE
+ADDI X19, XZR, #0 //array A
+ADDI X20, XZR, #5 //length of array n
+ADDI X9, XZR, #0 //TEMP i for loops
+ADDI X10, XZR, #0 //TEMP for loops
+ADDI X11, XZR, #0 //TEMP for loops
+ADDI X2, XZR, #0 //TEMP START
+ADDI X3, XZR, #3 //TEMP VALUE
 
 BL fill
 BL print_arr
 
-ADD X4, XZR, X7 //SET i to START
+ADD X9, XZR, X2 //SET i to START
 BL find_index
 
 B end
@@ -58,79 +58,80 @@ BR LR
 
 
 fill:
-SUBS X5, X4, X3 //X5 = i - n
+SUBS X10, X9, X20 
+SUBS X10, X9, X20 //X10 = i - n
 B.GE exit_fill
 
 //fill array a of n elements with decreasing values from n-1 to 0
-LSL X6, X4, #3 //X6 = 8*i
-ADD X6, X6, X2 //X6 = &a[i]
+LSL X11, X9, #3 //X11 = 8*i
+ADD X11, X11, X19 //X11 = &a[i]
 
-SUB X5, X3, X4 //X5 = n - i
-SUBI X5, X5, #1 //X5 = n - i - 1
+SUB X10, X20, X9 //X10 = n - i
+SUBI X10, X10, #1 //X10 = n - i - 1
 
-STUR X5, [X6, #0] //a[i] = n - i - 1
+STUR X10, [X11, #0] //a[i] = n - i - 1
 
-ADDI X4, X4, #1 //i++
+ADDI X9, X9, #1 //i++
 
 B fill
 exit_fill:
-ADDI X4, XZR, #0 //RESET i
+ADDI X9, XZR, #0 //RESET i
 BR LR
 
 
 find_index:
-SUBS X5, X4, X3 //X5 = i - n
+SUBS X10, X9, X20 //X10 = i - n
 B.GE exit_find_index
 
-LSL X6, X4, #3 //X6 = 8*i
-ADD X6, X6, X2 //X6 = &a[i]
-LDUR X6, [X6, #0] //X6 = a[i]
+LSL X11, X9, #3 //X11 = 8*i
+ADD X11, X11, X19 //X11 = &a[i]
+LDUR X11, [X11, #0] //X11 = a[i]
 
-SUBS X5, X8, X6 //X5 = VALUE - a[i]
+SUBS X10, X3, X11 //X10 = VALUE - a[i]
 B.GE exit_find_index
 
-ADDI X4, X4, #1 //i++
+ADDI X9, X9, #1 //i++
 
 B find_index
 exit_find_index:
-PRNT X4
+PRNT X9
 BR LR
 
 
 skip_duplicates:
-SUBS X5, X4, X3 //X5 = i - n
+SUBS X10, X9, X20 //X10 = i - n
 B.GE exit_skip_duplicates
 
-LSL X6, X4, #3 //X6 = 8*i
-ADD X6, X6, X2 //X6 = &a[i]
-LDUR X6, [X6, #0] //X6 = a[i]
+LSL X11, X9, #3 //X11 = 8*i
+ADD X11, X11, X19 //X11 = &a[i]
+LDUR X11, [X11, #0] //X11 = a[i]
 
-SUB X5, X6, X8 //VALUE
-CBZ X5, exit_skip_duplicates
+SUB X10, X11, X3 //VALUE
+CBZ X10, exit_skip_duplicates
 
-ADDI X4, X4, #1 //i++
+ADDI X9, X9, #1 //i++
 
 B skip_duplicates
 exit_skip_duplicates:
-PRNT X4
+PRNT X9
 BR LR
 
 
 print_arr:
-SUBS X5, X4, X3 //X5 = i - n
+SUBS X10, X9, X20 //X10 = i - n
 B.GE exit_fill
 
-LSL X6, X4, #3 //X6 = 8*i
-ADD X6, X6, X2 //X6 = &a[i]
-LDUR X6, [X6, #0] //X6 = a[i]
+LSL X11, X9, #3 //X11 = 8*i
+ADD X11, X11, X19 //X11 = &a[i]
+LDUR X11, [X11, #0] //X11 = a[i]
 
-PRNT X6
+PRNT X11
 
-ADDI X4, X4, #1 //i++
+ADDI X9, X9, #1 //i++
 
 B print_arr
 exit_print_arr:
-ADDI X4, XZR, #0 //RESET i
+ADDI X9, XZR, #0 //RESET i
 BR LR
 
 end: //LAST LINE
