@@ -13,7 +13,7 @@ ADDI X4, XZR, #0 //TEMP i for loops
 ADDI X5, XZR, #0 //TEMP for loops
 ADDI X6, XZR, #0 //TEMP for loops
 ADDI X7, XZR, #0 //TEMP START for find_index
-ADDI X8, XZR, #0 //TEMP VALUE for find_index
+ADDI X8, XZR, #3 //TEMP VALUE for find_index
 
 BL fill
 BL print_arr
@@ -64,13 +64,15 @@ LSL X6, X4, #3 //X6 = 8*i
 ADD X6, X6, X2 //X6 = &a[i]
 LDUR X6, [X6, #0] //X6 = a[i]
 
-SUBS X5, X6, 
+SUBS X5, X8, X6 //X5 = VALUE - a[i]
+B.GE exit_find_index
+
+ADDI X4, X4, #1 //i++
 
 B find_index
 exit_find_index:
-ADDI X4, XZR, #0 //RESET i
+PRNT X4
 BR LR
-
 
 print_arr:
 SUBS X5, X4, X3 //X5 = i - n
