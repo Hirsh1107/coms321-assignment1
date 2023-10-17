@@ -1,3 +1,6 @@
+//COMS321 Programming Assignment 1
+//Team member 1: Drew Hirsh - ahirsh@iastate.edu
+//Team member 2: Tim Kuehn - timkuehn@iastate.edu
 
 ADDI X0, XZR, #5 //swap param i
 ADDI X1, XZR, #12 //swap param j
