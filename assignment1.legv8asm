@@ -7,8 +7,8 @@ ADDI X1, XZR, #12 //swap param j
 ADDI X2, XZR, #0 //array A
 ADDI X3, XZR, #5 //length of array n
 ADDI X4, XZR, #0 //increment i
-ADDI X5, XZR, #0 //compare two values
-ADDI X6, XZR, #0 //store array index
+ADDI X5, XZR, #0 //TEMP
+ADDI X6, XZR, #0 //TEMP
 
 B main
 
@@ -37,10 +37,14 @@ B.GE exit_fill
 PRNT X4
 LSL X6, X4, #3 //X6 = 8*i
 ADD X6, X6, X2 //X6 = &a[i]
-LDUR X6, [X6, #0] //X6 = a[i]
-PRNT X6
 
-ADDI X4, X4, #1
+SUB X5, X3, X4 //X5 = n - i
+SUBI X5, X5, #1 //X5 = n - i - 1
+
+STUR X5, [X6, #0] //a[i] = n - i - 1
+PRNT X5
+
+ADDI X4, X4, #1 //i++
 
 B fill
 exit_fill:
