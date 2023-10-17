@@ -8,8 +8,13 @@ ADDI X2, XZR, #0 //array A
 ADDI X3, XZR, #5 //length of array n
 ADDI X4, XZR, #0 //increment i
 ADDI X5, XZR, #0 //compare two values
+ADDI X6, XZR, #0 //store array index
 
+B main
+
+main:
 BL fill
+BR LR
 
 swap:
 SUBI SP, SP, #16 //ALLOCATE MEMORY TO SP
@@ -30,8 +35,10 @@ B.GE exit_fill
 
 //fill array a of n elements with decreasing values from n-1 to 0
 PRNT X4
-
-
+LSL X6, X4, #3 //X6 = 8*i
+ADD X6, X6, X2 //X6 = &a[i]
+LDUR X6, [X6, #0] //X6 = a[i]
+PRNT X6
 
 ADDI X4, X4, #1
 
