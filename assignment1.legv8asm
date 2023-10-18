@@ -7,25 +7,30 @@ B main
 main:
 ADDI X0, XZR, #5 //swap param i
 ADDI X1, XZR, #12 //swap param j
+ADDI X2, XZR, #0 //TEMP START
+ADDI X3, XZR, #3 //TEMP VALUE
+ADDI X4, XZR, #8 //TEMP END
+ADDI X9, XZR, #0 //TEMP i for loops
+ADDI X10, XZR, #0 //TEMP for loops
+ADDI X11, XZR, #0 //TEMP for loops
 ADDI X19, XZR, #0 //array A
 ADDI X20, XZR, #5 //length of array n
-ADDI X9, XZR, #0 //TEMP i for loops
-ADDI X10, XZR, #0 //TEMP j for loops
-ADDI X11, XZR, #0 //TEMP for loops
-ADDI X2, XZR, #1 //ARG START
-ADDI X3, XZR, #3 //ARG VALUE
-ADDI X21, XZR, #0 //index
+ADDI X21, XZR, #0 //INDEX
+
 
 BL fill
 BL print_arr
-//BL find_index
-//PRNT X21
-BL complete_cycle
+
+ADD X9, XZR, X2 //SET i to START
+BL find_index
+PRNT X21
+//BL complete_cycle
 
 B end
 
 
 complete_cycle:
+
 SUB X10, X21, X2 //X10 = index - start
 CBZ X10, exit_cycle //if start=index exit
 
@@ -42,9 +47,6 @@ PRNT X1
 //swap(&value, &a[index]);
 BL swap
 
-PRNT X0
-PRNT X1
-
 B complete_cycle
 exit_cycle:
 BR LR
@@ -59,21 +61,27 @@ BR LR
 
 binary_search:
 
+
+
 //TODO implement binary_search
 
 BR LR
 
 swap:
+SUBI SP, SP, #16 //ALLOCATE MEMORY TO SP
 
-LDUR X10, [X0, #0]
-LDUR X11, [X1, #0]
-STUR X10, [X1, #0]
-STUR X11, [X0, #0]
+STUR X0, [SP, #0]
+STUR X1, [SP, #8]
 
+LDUR X0, [SP, #8]
+LDUR X1, [SP, #0]
+
+ADDI SP, SP, #16 //RESTORE SP
 BR LR
 
 
 fill:
+SUBS X10, X9, X20 
 SUBS X10, X9, X20 //X10 = i - n
 B.GE exit_fill
 
@@ -103,6 +111,7 @@ ADD X11, X11, X19 //X11 = &a[i]
 LDUR X11, [X11, #0] //X11 = a[i]
 
 ADDI X9, X9, #1 //i++
+
 SUBS X10, X3, X11 //X10 = VALUE - a[i]
 B.GE exit_find_index
 
@@ -110,25 +119,26 @@ ADDI X21, X21, #1 //index++
 
 B find_index
 exit_find_index:
+
 BR LR
 
 
 skip_duplicates:
-SUBS X10, X21, X20 //X10 = index - n
+SUBS X10, X9, X20 //X10 = i - n
 B.GE exit_skip_duplicates
 
-LSL X11, X21, #3 //X11 = 8*index
+LSL X11, X9, #3 //X11 = 8*i
 ADD X11, X11, X19 //X11 = &a[i]
 LDUR X11, [X11, #0] //X11 = a[i]
 
 SUB X10, X11, X3 //VALUE
 CBZ X10, exit_skip_duplicates
 
-ADDI X21, X21, #1 //index++
+ADDI X9, X9, #1 //i++
 
 B skip_duplicates
 exit_skip_duplicates:
-PRNT X21
+PRNT X9
 BR LR
 
 
