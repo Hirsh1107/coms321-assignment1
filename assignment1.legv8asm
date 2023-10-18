@@ -15,6 +15,7 @@ ADDI X10, XZR, #0 //TEMP for loops
 ADDI X11, XZR, #0 //TEMP for loops
 ADDI X19, XZR, #0 //array A
 ADDI X20, XZR, #5 //length of array n
+<<<<<<< HEAD
 ADDI X21, XZR, #0 //INDEX
 
 
@@ -25,6 +26,19 @@ ADD X9, XZR, X2 //SET i to START
 BL find_index
 PRNT X21
 //BL complete_cycle
+=======
+ADDI X9, XZR, #0 //TEMP i for loops
+ADDI X10, XZR, #0 //TEMP for loops
+ADDI X11, XZR, #0 //TEMP for loops
+ADDI X2, XZR, #0 //TEMP START
+ADDI X3, XZR, #3 //TEMP VALUE
+
+BL fill
+BL print_arr
+BL complete_cycle
+>>>>>>> da5d2c89e06681f325a54dfceccc7b32d8df6b46
+
+//BL find_index
 
 B end
 
@@ -49,6 +63,8 @@ BL swap
 
 B complete_cycle
 exit_cycle:
+BR LR
+
 BR LR
 
 
@@ -110,16 +126,23 @@ LSL X11, X9, #3 //X11 = 8*i
 ADD X11, X11, X19 //X11 = &a[i]
 LDUR X11, [X11, #0] //X11 = a[i]
 
+<<<<<<< HEAD
 ADDI X9, X9, #1 //i++
 
+=======
+>>>>>>> da5d2c89e06681f325a54dfceccc7b32d8df6b46
 SUBS X10, X3, X11 //X10 = VALUE - a[i]
 B.GE exit_find_index
 
-ADDI X21, X21, #1 //index++
+ADDI X9, X9, #1 //i++
 
 B find_index
 exit_find_index:
+<<<<<<< HEAD
 
+=======
+PRNT X9
+>>>>>>> da5d2c89e06681f325a54dfceccc7b32d8df6b46
 BR LR
 
 
@@ -160,6 +183,4 @@ ADDI X9, XZR, #0 //RESET i
 BR LR
 
 end: //LAST LINE
-
-
 
