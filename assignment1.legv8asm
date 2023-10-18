@@ -10,7 +10,7 @@ ADDI X1, XZR, #12 //swap param j
 ADDI X2, XZR, #0 //TEMP START
 ADDI X3, XZR, #3 //TEMP VALUE
 ADDI X4, XZR, #8 //TEMP END
-ADDI, X5, XZR, #0 //RETURN
+ADDI X5, XZR, #0 //RETURN
 ADDI X9, XZR, #0 //TEMP i for loops
 ADDI X10, XZR, #0 //TEMP COMPARE for loops
 ADDI X11, XZR, #0 //TEMP VALUE for loops
@@ -23,7 +23,7 @@ ADDI X24, XZR, #0 //VAL
 
 
 BL fill
-//BL print_arr
+BL print_arr
 BL cycle_sort
 
 ADD X9, XZR, X2 //SET i to START
@@ -70,7 +70,20 @@ LDUR X24, [X11, #0] //val = a[cstart]
 BL find_index
 ADDI X22, X0, #0 //idx = RETURN
 
-ADDI X23, X23, #1
+SUB X10, X22, X23
+CBZ X10, cycle_sort
+
+//idx = skip_duplicates(a, idx, val);
+BL skip_duplicates
+ADDI X22, X0, #0 //idx = RETURN
+
+//swap(&val, &a[idx]);
+
+
+//complete_cycle(a, n, cstart, idx, val);
+B complete_cycle
+
+ADDI X23, X23, #1 //cstart++
 
 B cycle_sort
 exit_cycle_sort:
@@ -134,7 +147,8 @@ ADDI X21, X21, #1 //index++
 
 B find_index
 exit_find_index:
-ADDI X0, X21, #0 //RETURN = index
+ADDI X5, X21, #0 //RETURN = index
+ADDI X21, XZR, #0 //RESET index
 BR LR
 
 
@@ -153,7 +167,8 @@ ADDI X9, X9, #1 //i++
 
 B skip_duplicates
 exit_skip_duplicates:
-PRNT X9
+ADDI X5, X9, #0 //RETURN = i 
+ADDI X9, XZR, #0 //RESET i
 BR LR
 
 
