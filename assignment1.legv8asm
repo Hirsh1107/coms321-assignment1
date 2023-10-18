@@ -10,23 +10,57 @@ ADDI X1, XZR, #12 //swap param j
 ADDI X19, XZR, #0 //array A
 ADDI X20, XZR, #5 //length of array n
 ADDI X9, XZR, #0 //TEMP i for loops
-ADDI X10, XZR, #0 //TEMP for loops
+ADDI X10, XZR, #0 //TEMP j for loops
 ADDI X11, XZR, #0 //TEMP for loops
-ADDI X2, XZR, #0 //TEMP START
-ADDI X3, XZR, #3 //TEMP VALUE
+ADDI X2, XZR, #0 //ARG START
+ADDI X3, XZR, #3 //ARG VALUE
+ADDI X21, XZR, #0 //index
 
 BL fill
 BL print_arr
 
 ADD X9, XZR, X2 //SET i to START
-BL find_index
+ADD X21, XZR, X2 //SET index to START
+
+ADDI X2, XZR, #0
+
+BL complete_cycle
 
 B end
 
 
 complete_cycle:
+SUB X10, X21, X2 //j = index - start
 
-//TODO implement complete_cycle
+CBZ X10, exit_cycle //if start=index exit
+
+BL find_index //find index()
+
+BL skip_duplicates //skip_duplicates
+
+ADDI X0, X3, #0 //X0 = &value
+
+LSL X1, X21, #3 //X1 = 8*index
+
+ADD X1, X1, X19 //X1 = &a[index]
+
+PRNT X0
+PRNT X1
+
+BL swap 
+
+STUR X11, [X1, #8] //TEMP X11 = X1 
+
+STUR X1, [X0, #8] //X1 = X0
+
+STUR X0, [X11, #0] //X0 = X11
+
+PRNT X0
+PRNT X1
+
+B complete_cycle
+
+exit_cycle:
 
 BR LR
 
@@ -58,7 +92,6 @@ BR LR
 
 
 fill:
-SUBS X10, X9, X20 
 SUBS X10, X9, X20 //X10 = i - n
 B.GE exit_fill
 
@@ -91,29 +124,30 @@ SUBS X10, X3, X11 //X10 = VALUE - a[i]
 B.GE exit_find_index
 
 ADDI X9, X9, #1 //i++
+ADDI X21, X21, #1
 
 B find_index
 exit_find_index:
-PRNT X9
+PRNT X21
 BR LR
 
 
 skip_duplicates:
-SUBS X10, X9, X20 //X10 = i - n
+SUBS X10, X21, X20 //X10 = index - n
 B.GE exit_skip_duplicates
 
-LSL X11, X9, #3 //X11 = 8*i
+LSL X11, X21, #3 //X11 = 8*index
 ADD X11, X11, X19 //X11 = &a[i]
 LDUR X11, [X11, #0] //X11 = a[i]
 
 SUB X10, X11, X3 //VALUE
 CBZ X10, exit_skip_duplicates
 
-ADDI X9, X9, #1 //i++
+ADDI X21, X21, #1 //index++
 
 B skip_duplicates
 exit_skip_duplicates:
-PRNT X9
+PRNT X21
 BR LR
 
 
