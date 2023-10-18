@@ -15,20 +15,15 @@ ADDI X9, XZR, #0 //TEMP i for loops
 ADDI X10, XZR, #0 //TEMP COMPARE for loops
 ADDI X11, XZR, #0 //TEMP VALUE for loops
 ADDI X19, XZR, #0 //array A
-ADDI X20, XZR, #5 //length of array n
+ADDI X20, XZR, #12 //length of array n
 ADDI X21, XZR, #0 //INDEX
 ADDI X22, XZR, #0 //IDX
 ADDI X23, XZR, #0 //CSTART
 ADDI X24, XZR, #0 //VAL
 
-
 BL fill
 BL print_arr
 BL cycle_sort
-
-ADD X9, XZR, X2 //SET i to START
-//BL find_index
-BL complete_cycle
 
 B end
 
@@ -62,23 +57,32 @@ SUBIS X10, X10, #-1 //X10 (n-1) - cstart
 B.GE exit_cycle_sort
 
 //val = a[cstart]
-LSL X11, X20, #3 //X11 = 8*cstart
+LSL X11, X23, #3 //X11 = 8*cstart
 ADD X11, X11, X19 //X11 = &a[cstart]
 LDUR X24, [X11, #0] //val = a[cstart]
 
+//set X2 to start
+//set X3 to value
+ADDI X2, X23, #0
+ADDI X3, X24, #0
+PRNT X2
+PRNT X3
+
 //idx = find_index(a, n, cstart, val);
 BL find_index
-ADDI X22, X0, #0 //idx = RETURN
+ADDI X22, X5, #0 //idx = RETURN
 
 SUB X10, X22, X23
 CBZ X10, cycle_sort
 
 //idx = skip_duplicates(a, idx, val);
 BL skip_duplicates
-ADDI X22, X0, #0 //idx = RETURN
+ADDI X22, X5, #0 //idx = RETURN
 
 //swap(&val, &a[idx]);
-
+ADDI X0, X24, #0
+LSL X11, X22, #3 //X11 = 8*idx
+ADD X11, X22, X19 //X11 = &a[idx]
 
 //complete_cycle(a, n, cstart, idx, val);
 B complete_cycle
@@ -99,11 +103,17 @@ BR LR
 swap:
 SUBI SP, SP, #16 //ALLOCATE MEMORY TO SP
 
+PRNT X0
+PRNT X1
+
 STUR X0, [SP, #0]
 STUR X1, [SP, #8]
 
 LDUR X0, [SP, #8]
 LDUR X1, [SP, #0]
+
+PRNT X0
+PRNT X1
 
 ADDI SP, SP, #16 //RESTORE SP
 BR LR
