@@ -12,56 +12,41 @@ ADDI X20, XZR, #5 //length of array n
 ADDI X9, XZR, #0 //TEMP i for loops
 ADDI X10, XZR, #0 //TEMP j for loops
 ADDI X11, XZR, #0 //TEMP for loops
-ADDI X2, XZR, #0 //ARG START
+ADDI X2, XZR, #1 //ARG START
 ADDI X3, XZR, #3 //ARG VALUE
 ADDI X21, XZR, #0 //index
 
 BL fill
 BL print_arr
-
-ADD X9, XZR, X2 //SET i to START
-ADD X21, XZR, X2 //SET index to START
-
-ADDI X2, XZR, #0
-
+//BL find_index
+//PRNT X21
 BL complete_cycle
 
 B end
 
 
 complete_cycle:
-SUB X10, X21, X2 //j = index - start
-
+SUB X10, X21, X2 //X10 = index - start
 CBZ X10, exit_cycle //if start=index exit
 
-BL find_index //find index()
-
+BL find_index //find_index()
 BL skip_duplicates //skip_duplicates
 
 ADDI X0, X3, #0 //X0 = &value
-
 LSL X1, X21, #3 //X1 = 8*index
-
 ADD X1, X1, X19 //X1 = &a[index]
 
 PRNT X0
 PRNT X1
 
-BL swap 
-
-STUR X11, [X1, #8] //TEMP X11 = X1 
-
-STUR X1, [X0, #8] //X1 = X0
-
-STUR X0, [X11, #0] //X0 = X11
+//swap(&value, &a[index]);
+BL swap
 
 PRNT X0
 PRNT X1
 
 B complete_cycle
-
 exit_cycle:
-
 BR LR
 
 
@@ -79,15 +64,12 @@ binary_search:
 BR LR
 
 swap:
-SUBI SP, SP, #16 //ALLOCATE MEMORY TO SP
 
-STUR X0, [SP, #0]
-STUR X1, [SP, #8]
+LDUR X10, [X0, #0]
+LDUR X11, [X1, #0]
+STUR X10, [X1, #0]
+STUR X11, [X0, #0]
 
-LDUR X0, [SP, #8]
-LDUR X1, [SP, #0]
-
-ADDI SP, SP, #16 //RESTORE SP
 BR LR
 
 
@@ -120,15 +102,14 @@ LSL X11, X9, #3 //X11 = 8*i
 ADD X11, X11, X19 //X11 = &a[i]
 LDUR X11, [X11, #0] //X11 = a[i]
 
+ADDI X9, X9, #1 //i++
 SUBS X10, X3, X11 //X10 = VALUE - a[i]
 B.GE exit_find_index
 
-ADDI X9, X9, #1 //i++
-ADDI X21, X21, #1
+ADDI X21, X21, #1 //index++
 
 B find_index
 exit_find_index:
-PRNT X21
 BR LR
 
 
