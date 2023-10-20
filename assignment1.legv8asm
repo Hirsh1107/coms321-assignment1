@@ -22,34 +22,65 @@ PRNT X0
 B end
 
 
-
+//X0 a[]
+//X1 n
+//X2 start
+//X3 index
+//X4 value
 complete_cycle:
-SUBS X9, X3, X2         //X9 = index (temp)
+SUBI SP, [SP, #48]
+STUR LR, [SP, #0] //saving LR to stack
+STUR X19, [SP, #8] //save X19 to stack before overwrite
+STUR X20, [SP, #16]
+STUR X21, [SP, #24]
+STUR X22, [SP, #32]
+STUR X23, [SP, #40] //save X23 to stack before overwrite
+
+ADDI X19, X0, #0 //a[]
+ADDI X20, X1, #0 //n
+ADDI X21, X2, #0 //start
+ADDI X22, X3, #0 //index
+ADDI X23, X4, #0 //value
+
+
+complete_loop:
+
+SUBS X9, X22, X21         //if index - start end
+
 CBZ X9, exit_complete_cycle    //X3 = value
-ADD X10, X0 XZR
-ADD X9, X3, XZR
-ADD X3, X4, XZR
+
+ADDI X0, X19, #0 //save a[] to saved register
+ADDI X1, X20, #0 //save n to saved register
+ADDI X2, X21, #0  //save index to saved register
+ADDI X3, X23, #0 //X3 = value for call
+
 BL find_index
-ADD X11, X0, XZR
-ADD X0, X10, XZR
-ADD X12, X1, XZR
-ADD X1, XZR, X11
-ADD X13, X2, XZR
-ADD X2, X3, XZR
+ADD X22, X0, #0 //index update
+
+ADD X0, X19, #0 //param update for call
+ADD X1, X22, #0 //param update for call
+ADD X2, X23, #0 //param update for call
+
 BL skip_duplicates
-ADD X14, X0, XZR
+ADDI X22, X0, #0 //
+
+//REPLACES SWAP CALL
+LSL X10, X22, #3 //index offset
+ADD X10, X19, X10 //X10 = &a[index]
+ADD X11, X23, XZR //X11 = value
+LDUR X23, [X10, #0] //value = a[index]
+STUR X11, [X10, #0] //Stores value to array
 
 
-ADDI X5, X3, #0 //X5 = &value
-LSL X1, X21, #3 //X1 = 8*index
-ADD X1, X1, X19 //X1 = &a[index]
-
-
-//swap(&value, &a[index]);
-BL swap
-
-B complete_cycle
+B complete_loop
 exit_complete_cycle:
+LDUR X23, [SP, #40] //reset all stack variables
+LDUR X22, [SP, #32]
+LDUR X21, [SP, #24]
+LDUR X20, [SP, #16]
+LDUR X19, [SP, #8]
+LDUR LR, [SP, #0] //reset all stack variables
+ADDI SP, SP #48 //deallocate stack space
 BR LR
 
 
