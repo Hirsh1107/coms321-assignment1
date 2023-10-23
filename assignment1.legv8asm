@@ -4,73 +4,57 @@
 
 B main
 
-//X9 a[]
-//X10 N
+//X19 a[]
+//X20 N
 main:
 
-ADDI X0, XZR, #0 //a[]
-ADDI X10, XZR, #5 //N = 5 
+ADDI X19, XZR, #0 //a[]
+ADDI X20, XZR, #5 //N = 5 
 
-SUBI SP, [SP, #16] //allocate stack space bay beeeee
-STUR X10, [SP, #8] //N
-
-ADDI X1, X10, #0 // N = N (wow big change!)
+ADDI X0, X19, #0 //a[]
+ADDI X1, X20, #0 // N = N (wow big change!)
 
 BL fill //a[] = X0 && N = X1
 
+ADDI X0, X19, #0 //a[]
+ADDI X1, X20, #0 // N = N (wow big change!)
+PRNT X0
+PRNT X1
 BL cycle_sort
-LDUR X10, [SP, #8] load n
-ADDI X9, X0, #0 //a[] for store
-STUR X9, [SP, #0] //store a[]
-STUR X10, [SP, #8] //store N
+PRNL
+PRNL 
+PRNL
 //X0 still set from fill
 ADDI X1, XZR, #0 //X1 = 0
-SUBI X2, X10, #1 //X2 = N-1
+SUBI X2, X20, #1 //X2 = N-1
 ADDI X3, XZR, #0 //X3 = 0
 
 BL binary_search //binary_search(a, 0, N - 1, 0);
 
-LDUR X9, [SP, #0] // load a[]
-LDUR X10, [SP, #8] //N
 
-STUR X9, [SP, #0] //store a[]
-STUR X10, [SP, #8]//store N
 
-ADDI X0, X9, #0
+ADDI X0, X19, #0 //a[]
 ADDI X1, XZR, #0
-SUBI X2, X10, #1 //N-1
+SUBI X2, X20, #1 //N-1
 SUBI X3, X2, #0 //N-1
 
 BL binary_search //binary_search(a, 0, N - 1, n-1);
 
-LDUR X9, [SP, #0] // load a[]
-LDUR X10, [SP, #8] //N
-
-STUR X9, [SP, #0] //store a[]
-STUR X10, [SP, #8]//store N
-
-ADDI X0, X9, #0
+ADDI X0, X19, #0 //a[]
 ADDI X1, XZR, #0
-SUBI X2, X10, #1 //N-1
-LSR X3, X10, #1 //N/2
+SUBI X2, X20, #1 //N-1
+LSR X3, X20, #1 //N/2
 
 BL binary_search //binary_search(a, 0, N - 1, n/2);
 
-LDUR X9, [SP, #0] // load a[]
-LDUR X10, [SP, #8] //N
 
-STUR X9, [SP, #0] //store a[]
-STUR X10, [SP, #8]//store N
-
-ADDI X0, X9, #0
+ADDI X0, X19, #0 //a[]
 ADDI X1, XZR, #0
-SUBI X2, X10, #1 //N-1
-ADDI X3, X10, #0 //N
+SUBI X2, X20, #1 //N-1
+ADDI X3, X20, #0 //N
 
 BL binary_search //binary_search(a, 0, N - 1, N);
 
-ADDI SP, [SP, #16]
-ADDI X0, XZR, #0
 
 B end
 
@@ -81,7 +65,7 @@ B end
 //X3 index
 //X4 value
 complete_cycle:
-SUBI SP, [SP, #48]
+SUBI SP, SP, #48
 STUR LR, [SP, #0] //saving LR to stack
 STUR X19, [SP, #8] //save X19 to stack before overwrite
 STUR X20, [SP, #16]
@@ -96,6 +80,7 @@ ADDI X22, X3, #0 //index
 ADDI X23, X4, #0 //value
 
 
+
 complete_loop:
 
 SUBS X9, X22, X21         //if index - start end
@@ -108,14 +93,14 @@ ADDI X2, X21, #0  //save index to saved register
 ADDI X3, X23, #0 //X3 = value for call
 
 BL find_index
-ADD X22, X0, #0 //index update
+ADDI X22, X0, #0 //index update
 
-ADD X0, X19, #0 //param update for call
-ADD X1, X22, #0 //param update for call
-ADD X2, X23, #0 //param update for call
+ADDI X0, X19, #0 //param update for call
+ADDI X1, X22, #0 //param update for call
+ADDI X2, X23, #0 //param update for call
 
 BL skip_duplicates
-ADDI X22, X0, #0 //
+ADDI X22, X0, #0 //update index
 
 //REPLACES SWAP CALL
 LSL X10, X22, #3 //index offset
@@ -127,22 +112,25 @@ STUR X11, [X10, #0] //Stores value to array
 
 B complete_loop
 exit_complete_cycle:
+
 LDUR X23, [SP, #40] //reset all stack variables
 LDUR X22, [SP, #32]
 LDUR X21, [SP, #24]
 LDUR X20, [SP, #16]
 LDUR X19, [SP, #8]
 LDUR LR, [SP, #0] //reset all stack variables
-ADDI SP, SP #48 //deallocate stack space
+ADDI SP, SP, #48 //deallocate stack space
+
 BR LR
+
 
 //X0 a[]
 //X1 n
 cycle_sort:
-SUBI SP, [SP, #48]
+SUBI SP, SP, #48
 STUR LR, [SP, #0] //saving LR to stack
 STUR X19, [SP, #8] //save X19 to stack before overwrite
-STUR X20, [SP, #16]
+STUR X20, [SP, #16] //n
 STUR X21, [SP, #24] //cstart
 STUR X22, [SP, #32] //val
 STUR X23, [SP, #40] //idx
@@ -153,12 +141,15 @@ ADDI X21, XZR, #0 //int cstart;
 //X22 val gets set in for loop
 //X23 idx
 
-cycle_sort_for_loop:
-SUBI X9, X20, #1 //n-1
-SUBS XZR, X21, X9 //for cstart < n-1
-B.GE  exit_cycle_sort
+cycle_sort_loop:
 
-LSL X10, X21, #3 //X11 = 8*cstart
+SUBI X10, X20, #1 //n-1
+SUBS XZR, X21, X10 //for cstart < n-1
+B.GE exit_cycle_sort
+
+PRNT X9
+
+LSL X10, X21, #3 //X10 = 8*cstart
 ADD X11, X10, X19 //X11 = &a[cstart]
 LDUR X22, [X11, #0] //val = a[cstart]
 
@@ -167,19 +158,25 @@ ADDI X1, X20, #0 //X1 = n for find_index
 ADDI X2, X21, #0 //X2 = cstart for find_index
 ADDI X3, X22, #0 //X3 = val for find_index
 
+PRNT X3
+PRNT X2
 BL find_index
+
 ADDI X23, X0, #0 //IDX = find_index
 
 SUB X9, X23, X21 //X9 = idx - cstart
-CBNZ X9 cycle_sort_for_loop
+PRNT X9
 
+CBZ X9, continue
+PRNT X13
 ADDI X0, X19, #0 //X3 = a[] for skip duplicates
 ADDI X1, X23, #0 //X3 = idx for skip duplicates
 ADDI X2, X22, #0 //X3 = val for skip duplicates
 
+PRNT X14
 BL skip_duplicates
-ADDI X23, X0, #0
-
+ADDI X23, X0, #0 //load idx from skip_duplicates
+PRNT X15
 //swap
 LSL X9, X23, #3 //X9 = 8*idx
 ADD X10, X9, X19 //X10 = &a[idx]
@@ -195,12 +192,25 @@ ADDI X2, X21, #0 //X2 = cstart for complete_cycle
 ADDI X3, X23, #0 //X3 = idx for complete_cycle
 ADDI X4, X22, #0 //X4 = val for complete_cycle
 
+PRNT X16
 BL complete_cycle
 
+continue:
 ADDI X21, X21, #1 //cstart++
-B cycle_sort_for_loop
+PRNT X21
+B cycle_sort_loop
 
 exit_cycle_sort:
+
+
+LDUR X23, [SP, #40] //idx
+LDUR X22, [SP, #32] //val
+LDUR X21, [SP, #24] //cstart
+LDUR X20, [SP, #16] //n
+LDUR X19, [SP, #8] //save X19 to stack before overwrite
+LDUR LR, [SP, #0] //saving LR to stack
+
+ADDI SP, SP, #48
 BR LR
 
 
@@ -270,29 +280,13 @@ SUBI X10, X10, #1 //X10 = n - i - 1
 //fill array a of n elements with decreasing values from n-1 to 0
 LSL X11, X9, #3 //X11 = 8*i
 ADD X11, X11, X0 //X11 = &a[i]
-10, [X11, #0] //a[i] = n - i - 1
+STUR X10, [X11, #0] //a[i] = n - i - 1
 ADDI X9, X9, #1 //i++
-
+PRNT X10
 B fill
 exit_fill:
 BR LR
 
-
-//X0 :a[]
-//X1: n
-forward_fill:
-SUBS X10, X9, X1 //X10 = i - n
-B.GE exit_forward_fill
-ADD X10, XZR, X9
-//fill array a of n elements with decreasing values from n-1 to 0
-LSL X11, X9, #3 //X11 = 8*i
-ADD X11, X11, X0 //X11 = &a[i]
-STUR X10, [X11, #0]
-PRNT X10
-ADDI X9, X9, #1 //i++
-B forward_fill
-exit_forward_fill:
-BR LR
 
 
 
@@ -302,19 +296,26 @@ BR LR
 //X2 start 
 //X3 value
 find_index:
-ADDI X9, X2, #1 //i = start + 1
+    
 ADDI X10, X2, #0 //index = start
+ADDI X9, X2, #1 //i = start + 1
+
 find_index_loop:
-SUBS XZR, X9, X1 // i - n
+
+SUBS X11, X9, X1 // i - n
 B.GE exit_find_index
+
 LSL X11, X9, #3 //X11 = 8*i
-ADD X12, X11, X0 //X11 = &a[i]
+ADD X12, X11, X0 //X12 = &a[i]
 LDUR X11, [X12, #0] //X11 = a[i]
 ADDI X9, X9, #1 //i++
-SUBS XZR, X3, X11 //X10 = a[i] - Value
+
+SUBS XZR, X11, X3 //if a[i] >= value
 B.GE find_index_loop
+
 ADDI X10, X10, #1 // index++
 B find_index_loop
+
 exit_find_index:
 ADDI X0, X10, #0 //RETURN = index
 BR LR
@@ -333,7 +334,7 @@ ADD X11, X10, X0 //X11 = &a[i]
 LDUR X10, [X11, #0] //X10 = a[i]
 
 SUB X12, X2, X10 //a[i] - Value
-CBNZ X10, exit_skip_duplicates //if a[i]!=Value then branch
+CBNZ X12, exit_skip_duplicates //if a[i]!=Value then branch
 ADDI X9, X9, #1 //i++
 
 B skip_loop
