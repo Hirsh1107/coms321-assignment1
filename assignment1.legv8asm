@@ -9,7 +9,7 @@ B main
 main:
 
 ADDI X19, XZR, #0 //a[]
-ADDI X20, XZR, #5 //N = 5 
+ADDI X20, XZR, #512 //N = 5 
 
 ADDI X0, X19, #0 //a[]
 ADDI X1, X20, #0 // N = N (wow big change!)
@@ -18,19 +18,25 @@ BL fill //a[] = X0 && N = X1
 
 ADDI X0, X19, #0 //a[]
 ADDI X1, X20, #0 // N = N (wow big change!)
-PRNT X0
-PRNT X1
+
 BL cycle_sort
+
 PRNL
 PRNL 
 PRNL
+
+ADDI X1, X20, #0
+
+BL print_arr
+
 //X0 still set from fill
+ADDI X0, X19, #0
 ADDI X1, XZR, #0 //X1 = 0
 SUBI X2, X20, #1 //X2 = N-1
 ADDI X3, XZR, #0 //X3 = 0
 
 BL binary_search //binary_search(a, 0, N - 1, 0);
-
+PRNT X0
 
 
 ADDI X0, X19, #0 //a[]
@@ -39,6 +45,7 @@ SUBI X2, X20, #1 //N-1
 SUBI X3, X2, #0 //N-1
 
 BL binary_search //binary_search(a, 0, N - 1, n-1);
+PRNT X0
 
 ADDI X0, X19, #0 //a[]
 ADDI X1, XZR, #0
@@ -46,7 +53,7 @@ SUBI X2, X20, #1 //N-1
 LSR X3, X20, #1 //N/2
 
 BL binary_search //binary_search(a, 0, N - 1, n/2);
-
+PRNT X0
 
 ADDI X0, X19, #0 //a[]
 ADDI X1, XZR, #0
@@ -54,7 +61,7 @@ SUBI X2, X20, #1 //N-1
 ADDI X3, X20, #0 //N
 
 BL binary_search //binary_search(a, 0, N - 1, N);
-
+PRNT X0
 
 B end
 
@@ -147,7 +154,6 @@ SUBI X10, X20, #1 //n-1
 SUBS XZR, X21, X10 //for cstart < n-1
 B.GE exit_cycle_sort
 
-PRNT X9
 
 LSL X10, X21, #3 //X10 = 8*cstart
 ADD X11, X10, X19 //X11 = &a[cstart]
@@ -158,26 +164,26 @@ ADDI X1, X20, #0 //X1 = n for find_index
 ADDI X2, X21, #0 //X2 = cstart for find_index
 ADDI X3, X22, #0 //X3 = val for find_index
 
-PRNT X3
-PRNT X2
+
 BL find_index
 
 ADDI X23, X0, #0 //IDX = find_index
 
 SUB X9, X23, X21 //X9 = idx - cstart
-PRNT X9
+
 
 CBZ X9, continue
-PRNT X13
+
 ADDI X0, X19, #0 //X3 = a[] for skip duplicates
 ADDI X1, X23, #0 //X3 = idx for skip duplicates
 ADDI X2, X22, #0 //X3 = val for skip duplicates
 
-PRNT X14
+
 BL skip_duplicates
 ADDI X23, X0, #0 //load idx from skip_duplicates
-PRNT X15
-//swap
+
+
+
 LSL X9, X23, #3 //X9 = 8*idx
 ADD X10, X9, X19 //X10 = &a[idx]
 ADDI X11, X22, #0 //X11 = val
@@ -192,12 +198,12 @@ ADDI X2, X21, #0 //X2 = cstart for complete_cycle
 ADDI X3, X23, #0 //X3 = idx for complete_cycle
 ADDI X4, X22, #0 //X4 = val for complete_cycle
 
-PRNT X16
+
 BL complete_cycle
 
 continue:
 ADDI X21, X21, #1 //cstart++
-PRNT X21
+
 B cycle_sort_loop
 
 exit_cycle_sort:
@@ -222,7 +228,7 @@ BR LR
 //X2 end
 //X3 value
 binary_search:
-SUBS XZR, X2, X1                //X9 = END - START
+SUBS XZR, X2, X1                //FLAG = END - START
 B.LT return_negative_one        // END < START return 1 
 ADD X9, X1, X2                 //X10 = START + END
 LSR X9, X9, #1                 //INDEX = (START+END)/2 
@@ -235,11 +241,13 @@ CBZ X11, return_index           //if a[index]==value exit return index
 
 SUBI SP, SP, #8
 STUR LR, [SP, #0]
+
 B.GT recursive_call             //binary_search(a, start, index -1, value)
 ADDI X1, X9, #1                 //start = index +1
 BL binary_search
 LDUR LR, [SP, #0]
 ADDI SP, SP, #8
+
 BR LR
 
 return_negative_one:
@@ -247,8 +255,6 @@ ADDI X0, XZR, #-1               //returns -1
 BR LR
 
 return_index:
-PRNT x1
-PRNT X2
 ADD X0, XZR, X9
 BR LR
 
@@ -262,9 +268,11 @@ BR LR
 
 
 swap:
-LDUR X9, [X0, #0]
-LDUR X0, [X1, #0]
-ADD X1, X9, XZR
+
+LDUR X9, [X0, #0] //X9 = value at *a
+LDUR X10, [X1, #0] //X10
+STUR X9, [X1, #0]
+STUR X19, [X0, #0] //X
 BR LR
 
 
@@ -282,7 +290,6 @@ LSL X11, X9, #3 //X11 = 8*i
 ADD X11, X11, X0 //X11 = &a[i]
 STUR X10, [X11, #0] //a[i] = n - i - 1
 ADDI X9, X9, #1 //i++
-PRNT X10
 B fill
 exit_fill:
 BR LR
@@ -348,15 +355,13 @@ BR LR
 //X1 : n
 
 print_arr:
-ADDI X9, X9, #0
-SUBS X10, XZR, X1 //X10 = i - n
+SUBS X10, X9, X1 //X10 = i - n
 B.GE exit_fill
-
 LSL X11, X9, #3 //X11 = 8*i
-ADD X11, X11, X0 //X11 = &a[i]
+ADD X11, X11, X19 //X11 = &a[i]
 LDUR X11, [X11, #0] //X11 = a[i]
+PRNT X11
 ADDI X9, X9, #1 //i++
-
 B print_arr
 exit_print_arr:
 ADDI X9, XZR, #0 //RESET i
